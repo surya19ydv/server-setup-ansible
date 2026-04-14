@@ -1,0 +1,47 @@
+- name: just practice for basic module
+  hosts: webserver
+  become: true
+
+  tasks:
+
+    - name: install nginx
+      apt:
+        name:
+        - nginx
+        - git
+        - curl
+        state: latest
+        update_cache: yes
+
+    - name: start nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: copy file
+      copy:
+        src: index.html
+        dest: /var/www/html/index.html
+        force: yes
+
+    - name: set permission
+      file:
+        path: /var/www/html/index.html
+        mode: "0755"
+
+    - name: create folder
+      file:
+        path: /var/www/html/app
+        state: directory
+
+    - name: create user
+      user:
+        name: "suryadev"
+        state: present
+
+    - name: firewall setup
+      ufw:
+        rule: allow
+        port: 80
+        proto: tcp
